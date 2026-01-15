@@ -1,0 +1,7 @@
+# Copy this file to .dev.vars for local development
+
+# better-auth secret (generate a secure random string for production)
+BETTER_AUTH_SECRET=development-secret-change-in-production
+
+# Base URL for better-auth (update for production)
+BETTER_AUTH_URL=http://localhost:8787

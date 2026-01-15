@@ -5,20 +5,26 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".expo/**", "release/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "dependsOn": ["^build"]
-    },
     "typecheck": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^typecheck"]
     },
     "clean": {
       "cache": false
+    },
+    "@repo/web#dev": {
+      "dependsOn": ["@repo/server#dev"],
+      "cache": false,
+      "persistent": true
+    },
+    "@repo/server#dev": {
+      "cache": false,
+      "persistent": true
     }
   }
 }
