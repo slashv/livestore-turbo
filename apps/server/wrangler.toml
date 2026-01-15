@@ -5,6 +5,7 @@ compatibility_flags = ["enable_request_signal", "nodejs_compat"]
 
 [dev]
 port = 8787
+ip = "0.0.0.0"
 
 # D1 Database for authentication
 [[d1_databases]]

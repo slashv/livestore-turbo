@@ -17,12 +17,6 @@ livestore-turbo/
 │   └── tsconfig/      # Shared TypeScript configs
 ```
 
-## Prerequisites
-
-- Node.js 20+
-- pnpm 9+
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) (for Cloudflare Workers)
-
 ## Getting Started
 
 ### 1. Install dependencies
@@ -66,26 +60,11 @@ pnpm dev:all       # All apps (may be chaotic)
 ### 4. Open the apps
 
 - **Web**: http://localhost:5173
-- **LiveStore Devtools**: http://localhost:5173/_livestore
 - **Server**: http://localhost:8787
+- **Electron**: Opens desktop app
 - **Mobile**: Use Expo Go app or iOS/Android simulator
 
 ## Architecture
-
-### LiveStore Flow
-
-```
-[Web/Electron/Mobile Clients]
-         │
-         ▼ WebSocket (wss://)
-[Cloudflare Worker]
-         │
-         ▼ Routes by storeId
-[Sync Backend Durable Object]
-         │
-         ▼ Persists to
-[DO SQLite]
-```
 
 ### Shared Schema
 
@@ -94,15 +73,6 @@ All apps share the same LiveStore schema from `@repo/schema`:
 - **Tables**: `todos`, `uiState` (client document)
 - **Events**: `todoCreated`, `todoCompleted`, `todoUncompleted`, `todoDeleted`, `todoClearedCompleted`
 - **Materializers**: Map events to SQLite state changes
-
-### Platform Adapters
-
-| Platform | Adapter | Storage |
-|----------|---------|---------|
-| Web | `@livestore/adapter-web` | OPFS + SharedWorker |
-| Expo | `@livestore/adapter-expo` | expo-sqlite |
-| Electron | `@livestore/adapter-web` | OPFS (native adapter coming soon) |
-| Server | `@livestore/sync-cf` | Durable Object SQLite |
 
 ## Authentication
 
@@ -122,63 +92,3 @@ The server includes [better-auth](https://better-auth.com) integration with emai
 | `pnpm build` | Build all apps |
 | `pnpm typecheck` | Run TypeScript type checking |
 | `pnpm clean` | Clean build artifacts |
-
-## App-specific scripts
-
-### Web (`apps/web`)
-
-```bash
-pnpm dev      # Start dev server
-pnpm build    # Production build
-pnpm preview  # Preview production build
-```
-
-### Server (`apps/server`)
-
-```bash
-pnpm dev           # Start local dev server
-pnpm deploy        # Deploy to Cloudflare
-pnpm db:generate   # Generate Drizzle migrations
-pnpm db:migrate    # Apply migrations locally
-```
-
-### Mobile (`apps/mobile`)
-
-```bash
-pnpm start     # Start Expo dev server
-pnpm ios       # Start iOS simulator
-pnpm android   # Start Android emulator
-```
-
-### Electron (`apps/electron`)
-
-```bash
-pnpm dev      # Start Electron in dev mode
-pnpm build    # Build for production
-pnpm package  # Package for distribution
-```
-
-## Environment Variables
-
-### Mobile (`apps/mobile`)
-
-```bash
-EXPO_PUBLIC_LIVESTORE_SYNC_URL=http://localhost:8787/sync
-EXPO_PUBLIC_LIVESTORE_STORE_ID=mobile-store
-```
-
-### Server (`apps/server`)
-
-```bash
-BETTER_AUTH_SECRET=your-secret-here
-BETTER_AUTH_URL=https://your-domain.com
-```
-
-## Learn More
-
-- [LiveStore Documentation](https://dev.docs.livestore.dev)
-- [TanStack Router](https://tanstack.com/router)
-- [Expo](https://expo.dev)
-- [Electron](https://electronjs.org)
-- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
-- [better-auth](https://better-auth.com)
