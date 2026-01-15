@@ -18,7 +18,10 @@
       "cache": false
     },
     "@repo/web#dev": {
-      "dependsOn": ["@repo/server#dev"],
+      "cache": false,
+      "persistent": true
+    },
+    "@repo/electron#dev": {
       "cache": false,
       "persistent": true
     },

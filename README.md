@@ -12,8 +12,8 @@ livestore-turbo/
 │   ├── mobile/        # Expo React Native app
 │   └── server/        # Cloudflare Worker (sync + auth)
 ├── packages/
-│   ├── schema/        # Shared LiveStore schema
-│   ├── ui/            # Shared hooks and utilities
+│   ├── schema/        # Shared LiveStore schema (tables, events, materializers)
+│   ├── core/          # Shared queries, actions, and utilities
 │   └── tsconfig/      # Shared TypeScript configs
 ```
 
@@ -49,31 +49,19 @@ pnpm db:migrate
 
 ### 3. Start development servers
 
-**Option A: Start everything with Turbo**
-
 ```bash
+# Web + Server (default, most common)
 pnpm dev
+
+# Or use specific commands:
+pnpm dev:web       # Server + Web app
+pnpm dev:mobile    # Mobile app (Expo) - run in separate terminal
+pnpm dev:electron  # Server + Electron app
+pnpm dev:server    # Just the sync server
+pnpm dev:all       # All apps (may be chaotic)
 ```
 
-**Option B: Start individual apps**
-
-```bash
-# Terminal 1: Start the sync server
-cd apps/server
-pnpm dev
-
-# Terminal 2: Start the web app
-cd apps/web
-pnpm dev
-
-# Terminal 3 (optional): Start Electron
-cd apps/electron
-pnpm dev
-
-# Terminal 4 (optional): Start mobile
-cd apps/mobile
-pnpm start
-```
+**Note**: Mobile (Expo) should be run in a separate terminal since it has an interactive CLI.
 
 ### 4. Open the apps
 

@@ -4,7 +4,12 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@repo/server --filter=@repo/web",
+    "dev:web": "turbo run dev --filter=@repo/server --filter=@repo/web",
+    "dev:mobile": "pnpm --filter @repo/mobile start",
+    "dev:electron": "turbo run dev --filter=@repo/server --filter=@repo/electron",
+    "dev:server": "pnpm --filter @repo/server dev",
+    "dev:all": "turbo run dev",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
