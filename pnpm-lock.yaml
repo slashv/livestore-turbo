@@ -38,12 +38,12 @@ importers:
       '@livestore/wa-sqlite':
         specifier: 0.4.0-dev.22
         version: 0.4.0-dev.22
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@repo/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       react:
         specifier: ^19.0.0
         version: 19.2.3
@@ -111,12 +111,12 @@ importers:
       '@livestore/sync-cf':
         specifier: 0.4.0-dev.22
         version: 0.4.0-dev.22(2iaeke36fl34rklr4cpdvialvi)
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@repo/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       expo:
         specifier: ~52.0.0
         version: 52.0.48(@babel/core@7.28.6)(@babel/preset-env@7.28.6(@babel/core@7.28.6))(encoding@0.1.13)(react-native@0.76.5(@babel/core@7.28.6)(@babel/preset-env@7.28.6(@babel/core@7.28.6))(@types/react@18.3.27)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)
@@ -212,12 +212,12 @@ importers:
       '@livestore/wa-sqlite':
         specifier: 0.4.0-dev.22
         version: 0.4.0-dev.22
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@repo/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@tanstack/react-router':
         specifier: ^1.93.0
         version: 1.150.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -262,6 +262,25 @@ importers:
         specifier: ^6.0.0
         version: 6.4.1(@types/node@25.0.8)(jiti@1.21.7)(lightningcss@1.27.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
 
+  packages/core:
+    dependencies:
+      '@repo/schema':
+        specifier: workspace:*
+        version: link:../schema
+      effect:
+        specifier: ^3.12.0
+        version: 3.19.12
+    devDependencies:
+      '@livestore/livestore':
+        specifier: 0.4.0-dev.22
+        version: 0.4.0-dev.22(3uwpidel46yjw6yfjfdtsjpeou)
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/schema:
     dependencies:
       '@livestore/livestore':
@@ -282,34 +301,6 @@ importers:
         version: 5.9.3
 
   packages/tsconfig: {}
-
-  packages/ui:
-    dependencies:
-      '@livestore/react':
-        specifier: 0.4.0-dev.22
-        version: 0.4.0-dev.22(awqwycoi4lxbe2zt5il3ljmlq4)
-      '@repo/schema':
-        specifier: workspace:*
-        version: link:../schema
-      effect:
-        specifier: ^3.12.0
-        version: 3.19.12
-      react:
-        specifier: ^19.0.0
-        version: 19.2.3
-    devDependencies:
-      '@livestore/livestore':
-        specifier: 0.4.0-dev.22
-        version: 0.4.0-dev.22(3uwpidel46yjw6yfjfdtsjpeou)
-      '@repo/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.2.8
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
 
 packages:
 

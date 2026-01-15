@@ -1,4 +1,4 @@
-import type { Filter, Todo } from '../hooks/useTodos'
+import type { Filter, Todo } from './queries'
 
 export function filterTodos(todos: readonly Todo[], filter: Filter): readonly Todo[] {
   switch (filter) {

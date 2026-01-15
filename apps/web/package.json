@@ -17,7 +17,7 @@
     "@livestore/sync-cf": "0.4.0-dev.22",
     "@livestore/wa-sqlite": "0.4.0-dev.22",
     "@repo/schema": "workspace:*",
-    "@repo/ui": "workspace:*",
+    "@repo/core": "workspace:*",
     "@tanstack/react-router": "^1.93.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

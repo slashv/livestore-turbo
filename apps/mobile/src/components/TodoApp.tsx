@@ -1,6 +1,13 @@
+import {
+  type Filter,
+  type Todo,
+  countActiveTodos,
+  createTodoActions,
+  filterTodos,
+  hasCompletedTodos,
+  visibleTodosQuery,
+} from '@repo/core'
 import { tables } from '@repo/schema'
-import { type Filter, type Todo, createTodoActions, visibleTodosQuery } from '@repo/ui'
-import { countActiveTodos, filterTodos, hasCompletedTodos } from '@repo/ui'
 import { useState } from 'react'
 import {
   FlatList,

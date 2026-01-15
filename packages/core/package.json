@@ -1,5 +1,5 @@
 {
-  "name": "@repo/ui",
+  "name": "@repo/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,14 +17,11 @@
     "effect": "^3.12.0"
   },
   "peerDependencies": {
-    "@livestore/livestore": "0.4.0-dev.22",
-    "@livestore/react": "0.4.0-dev.22",
-    "react": "^19.0.0"
+    "@livestore/livestore": "0.4.0-dev.22"
   },
   "devDependencies": {
     "@livestore/livestore": "0.4.0-dev.22",
     "@repo/tsconfig": "workspace:*",
-    "@types/react": "^19.0.0",
     "typescript": "^5.7.2"
   }
 }

@@ -18,7 +18,7 @@
     "@livestore/sync-cf": "0.4.0-dev.22",
     "@livestore/wa-sqlite": "0.4.0-dev.22",
     "@repo/schema": "workspace:*",
-    "@repo/ui": "workspace:*",
+    "@repo/core": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

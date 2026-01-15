@@ -1,6 +1,12 @@
+import { createTodoActions } from '@repo/core'
+import {
+  type Filter,
+  countActiveTodos,
+  filterTodos,
+  hasCompletedTodos,
+  visibleTodosQuery,
+} from '@repo/core'
 import { tables } from '@repo/schema'
-import { type Filter, createTodoActions, visibleTodosQuery } from '@repo/ui'
-import { countActiveTodos, filterTodos, hasCompletedTodos } from '@repo/ui'
 import { useAppStore } from '~/livestore/store'
 
 export function TodoApp() {
