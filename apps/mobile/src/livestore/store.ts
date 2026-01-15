@@ -9,7 +9,8 @@ import { unstable_batchedUpdates as batchUpdates } from 'react-native'
 // Get sync URL from Expo constants or use default
 const expoConfig = Constants.expoConfig?.extra ?? {}
 const syncUrl = (expoConfig.LIVESTORE_SYNC_URL as string) ?? 'http://localhost:8787/sync'
-const storeId = (expoConfig.LIVESTORE_STORE_ID as string) ?? 'mobile-store'
+// Shared store ID - must be the same across all clients for sync
+const storeId = (expoConfig.LIVESTORE_STORE_ID as string) ?? 'todo-app'
 
 const adapter = makePersistedAdapter({
   sync: { backend: makeWsSync({ url: syncUrl }) },

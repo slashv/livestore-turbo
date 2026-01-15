@@ -1,27 +1,22 @@
 import { makePersistedAdapter } from '@livestore/adapter-web'
 import LiveStoreSharedWorker from '@livestore/adapter-web/shared-worker?sharedworker'
 import { useStore } from '@livestore/react'
+import { makeWsSync } from '@livestore/sync-cf/client'
 import { SyncPayload, schema } from '@repo/schema'
 import { unstable_batchedUpdates as batchUpdates } from 'react-dom'
 import LiveStoreWorker from './worker?worker'
 
-// Generate or retrieve a stable store ID for this browser
-function getStoreId(): string {
-  const key = 'livestore-store-id'
-  let storeId = localStorage.getItem(key)
-  if (!storeId) {
-    storeId = `store-${crypto.randomUUID()}`
-    localStorage.setItem(key, storeId)
-  }
-  return storeId
-}
+// Shared store ID - must be the same across all clients for sync
+const storeId = import.meta.env.VITE_LIVESTORE_STORE_ID ?? 'todo-app'
 
-const storeId = getStoreId()
+// Sync backend URL
+const syncUrl = import.meta.env.VITE_LIVESTORE_SYNC_URL ?? 'http://localhost:8787/sync'
 
 const adapter = makePersistedAdapter({
   storage: { type: 'opfs' },
   worker: LiveStoreWorker,
   sharedWorker: LiveStoreSharedWorker,
+  sync: { backend: makeWsSync({ url: syncUrl }) },
 })
 
 export function useAppStore() {

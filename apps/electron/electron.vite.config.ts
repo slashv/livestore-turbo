@@ -1,11 +1,14 @@
 import path from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import wasm from 'vite-plugin-wasm'
+import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      outDir: 'dist/main',
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, 'src/main/index.ts'),
@@ -16,6 +19,7 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      outDir: 'dist/preload',
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, 'src/preload/index.ts'),
@@ -24,13 +28,14 @@ export default defineConfig({
     },
   },
   renderer: {
-    plugins: [react()],
+    plugins: [wasm(), topLevelAwait(), react()],
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src/renderer'),
       },
     },
     build: {
+      outDir: 'dist/renderer',
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, 'src/renderer/index.html'),
@@ -40,5 +45,12 @@ export default defineConfig({
     worker: {
       format: 'es',
     },
+    server: {
+      fs: { strict: false },
+    },
+    optimizeDeps: {
+      exclude: ['@livestore/wa-sqlite'],
+    },
+    assetsInclude: ['**/*.wasm'],
   },
 })

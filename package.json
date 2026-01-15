@@ -7,7 +7,7 @@
     "dev": "turbo run dev --filter=@repo/server --filter=@repo/web",
     "dev:web": "turbo run dev --filter=@repo/server --filter=@repo/web",
     "dev:mobile": "pnpm --filter @repo/mobile start",
-    "dev:electron": "turbo run dev --filter=@repo/server --filter=@repo/electron",
+    "dev:electron": "turbo run dev --filter=@repo/electron",
     "dev:server": "pnpm --filter @repo/server dev",
     "dev:all": "turbo run dev",
     "lint": "biome check .",
