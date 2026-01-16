@@ -1,6 +1,6 @@
 # LiveStore Turborepo
 
-A cross-platform Todo application demonstrating [LiveStore](https://livestore.dev) across Web, Electron, and Mobile (Expo) with shared schema and real-time sync via Cloudflare.
+A cross platform app using LiveStore.
 
 ## Project Structure
 
@@ -25,7 +25,7 @@ livestore-turbo/
 pnpm install
 ```
 
-### 2. Set up Cloudflare (optional, for sync)
+### 2. Set up Cloudflare
 
 Create a D1 database for authentication:
 
