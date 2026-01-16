@@ -12,4 +12,11 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
+  webServer: {
+    command: 'pnpm db:migrate && pnpm dev',
+    url: 'http://localhost:8787',
+    cwd: '../../server',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+  },
 })

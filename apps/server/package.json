@@ -8,8 +8,8 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply livestore-auth --local",
-    "db:migrate:prod": "wrangler d1 migrations apply livestore-auth --remote"
+    "db:migrate": "wrangler d1 migrations apply livestore-auth-prod --local",
+    "db:migrate:prod": "wrangler d1 migrations apply livestore-auth-prod --remote"
   },
   "dependencies": {
     "@better-auth/expo": "^1.2.0",
