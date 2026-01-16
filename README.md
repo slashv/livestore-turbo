@@ -25,20 +25,33 @@ livestore-turbo/
 pnpm install
 ```
 
-### 2. Set up Cloudflare
+### 2. Set up the database
 
-Create a D1 database for authentication:
+#### Local Development (Quick Start)
+
+For local development, you only need to run the migrations with the `--local` flag (which is the default):
+
+```bash
+cd apps/server
+pnpm db:migrate
+```
+
+This creates a local SQLite database - no Cloudflare account required.
+
+#### Production Setup (Cloudflare D1)
+
+For production deployment, create a D1 database:
 
 ```bash
 cd apps/server
 wrangler d1 create livestore-auth
 ```
 
-Update `wrangler.toml` with the database ID, then run migrations:
+Update `wrangler.toml` with the database ID from the output, then run migrations:
 
 ```bash
 pnpm db:generate
-pnpm db:migrate
+pnpm db:migrate:prod
 ```
 
 ### 3. Start development servers
@@ -125,10 +138,7 @@ Each app has end-to-end tests that verify the complete todo flow: login, create 
 ### Web E2E Tests (Playwright)
 
 ```bash
-# Start the server first
-pnpm dev:server
-
-# In another terminal, run web e2e tests
+# Run web e2e tests (automatically starts server + web app)
 cd apps/web
 pnpm test:e2e
 ```
@@ -136,10 +146,7 @@ pnpm test:e2e
 ### Electron E2E Tests (Playwright)
 
 ```bash
-# Start the server first
-pnpm dev:server
-
-# In another terminal, run electron e2e tests (builds app first)
+# Run electron e2e tests (automatically starts server, builds app first)
 cd apps/electron
 pnpm test:e2e
 ```
