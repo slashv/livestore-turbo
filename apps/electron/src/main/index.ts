@@ -2,12 +2,9 @@ import { join } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 
-// Production API URL
-const API_URL = process.env.VITE_API_URL ?? 'https://livestore-app-server.contact-106.workers.dev'
-
-// Use localhost in development
+// API URL - use env var if set (production), otherwise default to localhost
+const effectiveApiUrl = process.env.VITE_API_URL ?? 'http://localhost:8787'
 const isDev = process.env.NODE_ENV === 'development'
-const effectiveApiUrl = isDev ? 'http://localhost:8787' : API_URL
 
 let mainWindow: BrowserWindow | null = null
 

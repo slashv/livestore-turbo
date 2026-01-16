@@ -1,11 +1,7 @@
 import { createAuthClient } from 'better-auth/react'
 
-// In production, use the deployed server; in dev, use localhost
-const baseURL =
-  import.meta.env.VITE_API_URL ??
-  (import.meta.env.DEV
-    ? 'http://localhost:8787'
-    : 'https://livestore-app-server.contact-106.workers.dev')
+// API URL - use env var if set (production), otherwise default to localhost
+const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:8787'
 
 const TOKEN_KEY = 'livestore-auth-token'
 
