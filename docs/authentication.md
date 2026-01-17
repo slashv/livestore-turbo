@@ -1,30 +1,70 @@
 # Authentication
 
-This project uses [better-auth](https://www.better-auth.com/) for cookie-based authentication with LiveStore sync.
+This project uses [better-auth](https://www.better-auth.com/) for authentication with LiveStore sync.
 
 ## Overview
 
-| Platform | How Auth Works |
-|----------|----------------|
-| **Web** | Cookies sent automatically via browser headers |
-| **Electron** | Same as web (Chromium-based) |
-| **Mobile (Expo)** | Cookies stored in `expo-secure-store`, passed via `syncPayload` |
+| Platform | Auth Method | How It Works |
+|----------|-------------|--------------|
+| **Web** | Cookies | Sent automatically via browser headers |
+| **Electron** | Bearer tokens | Stored in localStorage, passed via `syncPayload` |
+| **Mobile (Expo)** | Cookies | Stored in `expo-secure-store`, passed via `syncPayload` |
 
 The server validates sessions at WebSocket connection time using better-auth's session API.
 
-## How It Works
+## Platform-Specific Implementation
 
-### Web & Electron
+### Web
 
-Browsers automatically include cookies with WebSocket upgrade requests. The server reads the `Cookie` header and validates the session.
+Browsers automatically include cookies with WebSocket upgrade requests. The server reads the `Cookie` header and validates the session. No special handling needed.
+
+### Electron (Desktop)
+
+Electron apps use bearer token authentication via better-auth's `bearer` plugin:
+
+1. On sign-in, the server returns a `set-auth-token` header
+2. The client stores this token in localStorage
+3. The token is sent with API requests via `Authorization: Bearer` header
+4. For WebSocket sync, the token is passed via `syncPayload.bearerToken`
+
+```typescript
+// apps/electron/src/renderer/lib/auth-client.ts
+export const authClient = createAuthClient({
+  baseURL,
+  fetchOptions: {
+    onSuccess: (ctx) => {
+      const authToken = ctx.response.headers.get('set-auth-token')
+      if (authToken) {
+        localStorage.setItem(TOKEN_KEY, authToken)
+      }
+    },
+    auth: {
+      type: 'Bearer',
+      token: () => getToken() ?? '',
+    },
+  },
+})
+```
+
+```typescript
+// apps/electron/src/renderer/livestore/store.ts
+const bearerToken = getToken()
+
+return useStore({
+  syncPayload: {
+    authToken: userId,
+    bearerToken: bearerToken ?? undefined,
+  },
+})
+```
 
 ### Mobile (Expo)
 
-Mobile apps don't have native cookie support. Instead:
+Mobile apps use the `@better-auth/expo` plugin which handles cookie storage:
 
 1. `@better-auth/expo` stores session cookies in `expo-secure-store`
 2. The app retrieves cookies via `authClient.getCookie()`
-3. Cookies are passed to the server via `syncPayload`
+3. Cookies are passed to the server via `syncPayload.cookie`
 
 ```typescript
 // apps/mobile/src/livestore/store.ts
@@ -38,18 +78,47 @@ return useStore({
 })
 ```
 
-### Server Validation
+## Server Configuration
 
-The server checks cookies from headers first (web), then falls back to the payload (mobile):
+The server uses both `expo` and `bearer` plugins:
+
+```typescript
+// apps/server/src/auth.ts
+import { expo } from '@better-auth/expo'
+import { bearer } from 'better-auth/plugins'
+
+betterAuth({
+  plugins: [expo(), bearer()],
+  session: {
+    expiresIn: 60 * 60 * 24 * 90, // 90 days
+  },
+})
+```
+
+### Session Validation
+
+The server validates auth credentials from multiple sources:
+
+1. **Bearer token** from `syncPayload.bearerToken` (Electron)
+2. **Cookie** from HTTP headers (Web)
+3. **Cookie** from `syncPayload.cookie` (Mobile)
 
 ```typescript
 // apps/server/src/index.ts
 const validatePayload = async (payload, { storeId, headers }) => {
-  const cookie = headers.get('cookie') || payload?.cookie
+  // Extract credentials (bearer token or cookie)
+  const credentials = extractAuthCredentials(headers, payload)
 
-  const session = await auth.api.getSession({
-    headers: new Headers({ cookie }),
-  })
+  // Build appropriate headers for validation
+  const authHeaders = new Headers()
+  if (credentials.type === 'bearer') {
+    authHeaders.set('authorization', `Bearer ${credentials.value}`)
+  } else {
+    authHeaders.set('cookie', credentials.value)
+  }
+
+  // Validate session
+  const session = await auth.api.getSession({ headers: authHeaders })
 
   if (!session || session.user.id !== storeId) {
     throw new Error('Unauthorized')
@@ -63,33 +132,38 @@ Each user can only sync their own store. The server enforces `storeId === sessio
 
 ## Security Considerations
 
-### Mobile Cookie Exposure
+### Bearer Tokens (Electron)
 
-On mobile, cookies are passed in the WebSocket payload. Mitigations:
+- Tokens are stored in localStorage (acceptable for desktop apps)
+- Tokens are passed in WebSocket payload, encrypted via TLS
+- Tokens share the same expiry as sessions (90 days)
+- Tokens can be revoked server-side by invalidating the session
 
-- WebSocket traffic is encrypted via TLS in production
+### Mobile Cookies
+
+- Cookies are stored in `expo-secure-store` (encrypted at rest)
+- Cookies are passed in WebSocket payload, encrypted via TLS
 - Cookies can be revoked server-side if compromised
-- `expo-secure-store` encrypts data at rest
 
-### Why Cookies Over JWTs?
+### Why Different Auth Methods?
 
-- better-auth is cookie-based by design
-- Cookies can be revoked instantly; JWTs require a blacklist
-- Simpler implementation without token generation
+| Platform | Why This Method |
+|----------|-----------------|
+| **Web** | Browsers handle cookies natively, including with WebSocket upgrades |
+| **Electron** | `file://` protocol has cookie restrictions; bearer tokens work reliably |
+| **Mobile** | `@better-auth/expo` provides cookie management via SecureStore |
 
-## Open Questions
+## Session Expiry
 
-### Session Expiry
+Sessions expire after 90 days. If a session expires:
 
-If a session expires mid-connection:
-- The connection stays open until the next sync operation
-- The operation fails, and the client must re-authenticate
-
-Future improvements could include client-side session refresh or WebSocket close codes for auth failures.
+- The WebSocket connection stays open until the next sync operation
+- The operation fails with an auth error
+- The client must re-authenticate
 
 ## References
 
-- [LiveStore Auth Patterns](https://dev.docs.livestore.dev/patterns/auth/)
-- [better-auth Documentation](https://www.better-auth.com/docs)
+- [better-auth Bearer Plugin](https://www.better-auth.com/docs/plugins/bearer)
 - [better-auth Expo Integration](https://www.better-auth.com/docs/integrations/expo)
+- [LiveStore Auth Patterns](https://dev.docs.livestore.dev/patterns/auth/)
 - [LiveStore Cloudflare Sync](https://dev.docs.livestore.dev/sync-providers/cloudflare/)

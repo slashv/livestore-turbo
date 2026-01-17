@@ -96,12 +96,13 @@ Data syncs in real-time across all connected clients via the Cloudflare Worker.
 
 ## Authentication
 
-Cookie-based authentication via [better-auth](https://better-auth.com):
+Authentication via [better-auth](https://better-auth.com):
 
-| Platform | How It Works |
-|----------|--------------|
-| Web/Electron | Cookies sent automatically via browser |
-| Mobile | Cookies stored in `expo-secure-store`, passed via sync payload |
+| Platform | Auth Method |
+|----------|-------------|
+| Web | Cookies (automatic via browser) |
+| Electron | Bearer tokens (via `bearer` plugin) |
+| Mobile | Cookies (via `expo` plugin + SecureStore) |
 
 Each user's data is isolated (`storeId === userId`).
 
