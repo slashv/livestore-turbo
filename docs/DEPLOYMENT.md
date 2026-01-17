@@ -58,13 +58,23 @@ The server deploy script automatically generates and sets `BETTER_AUTH_SECRET` i
 
 ## Quick Start
 
+**Release a new version** (recommended for production):
+
+```bash
+pnpm release patch   # 1.0.0 -> 1.0.1 (bug fixes)
+pnpm release minor   # 1.0.0 -> 1.1.0 (new features)
+pnpm release major   # 1.0.0 -> 2.0.0 (breaking changes)
+```
+
+This bumps the version, creates a git tag, pushes to GitHub, and triggers the CI/CD pipeline to deploy all platforms.
+
 **Deploy to preview** (isolated dev environment for testing):
 
 ```bash
 pnpm deploy:preview
 ```
 
-**Deploy to production**:
+**Deploy to production manually** (bypasses CI):
 
 ```bash
 pnpm deploy:prod
@@ -361,3 +371,88 @@ pnpm deploy:web:preview     # Then
 ```
 
 The web preview must be built with `.env.preview` to point to the dev server.
+
+---
+
+## CI/CD Pipeline
+
+### Continuous Integration (CI)
+
+Every push to `main` and every pull request triggers the CI workflow (`.github/workflows/ci.yml`):
+
+| Job | Purpose |
+|-----|---------|
+| **Lint & Typecheck** | Runs `biome check` and `tsc --noEmit` across all packages |
+| **E2E Tests (Web)** | Runs Playwright tests against web app with local server |
+| **Build All** | Verifies all packages compile successfully |
+
+CI acts as a quality gate - if any job fails, you know something is broken before deploying.
+
+### Pre-commit Hooks
+
+The repo uses [Husky](https://typicode.github.io/husky/) to run checks before each commit:
+
+1. **lint-staged** - Runs `biome check` on staged files
+2. **typecheck** - Runs `tsc --noEmit` across all packages
+
+If either check fails, the commit is rejected. This prevents pushing code that would fail CI.
+
+### Continuous Deployment (CD)
+
+The deploy workflow (`.github/workflows/deploy.yml`) triggers on:
+
+1. **Version tags** (`v*`) - e.g., `v1.0.0`, `v1.2.3`
+2. **Manual dispatch** - From the GitHub Actions UI
+
+When triggered, it deploys:
+
+| Platform | Destination |
+|----------|-------------|
+| Server | Cloudflare Workers |
+| Web | Cloudflare Pages |
+| Electron | GitHub Releases (Mac, Windows, Linux) |
+| Mobile | EAS Build (iOS, Android) |
+
+### Release Workflow
+
+The recommended way to deploy to production:
+
+```bash
+# 1. Make sure you're on main with latest changes
+git checkout main
+git pull
+
+# 2. Release (bumps version, tags, pushes, triggers deploy)
+pnpm release patch   # or minor/major
+
+# 3. Monitor the deploy workflow
+gh run watch
+```
+
+What `pnpm release <version>` does:
+
+1. Bumps version in `package.json` (e.g., `1.0.0` -> `1.0.1`)
+2. Creates a commit with message `v1.0.1`
+3. Creates a git tag `v1.0.1`
+4. Pushes commit and tag to origin
+5. GitHub Actions detects the `v*` tag and runs the deploy workflow
+
+### CI/CD Secrets
+
+These secrets must be configured in GitHub repository settings:
+
+| Secret | Purpose |
+|--------|---------|
+| `CLOUDFLARE_API_TOKEN` | Deploying to Cloudflare Workers and Pages |
+| `EXPO_TOKEN` | Building mobile apps with EAS |
+| `GITHUB_TOKEN` | Automatically available, used for Electron releases |
+
+### Local vs CI Deployment
+
+| Method | Use Case | CI Checks? |
+|--------|----------|------------|
+| `pnpm release <version>` | Production releases | Yes - full CI runs first |
+| `pnpm deploy:prod` | Emergency hotfixes | No - deploys immediately |
+| `pnpm deploy:preview` | Testing changes | No - deploys immediately |
+
+For normal releases, always use `pnpm release` to ensure CI passes before deploying.
