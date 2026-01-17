@@ -28,6 +28,7 @@
     "deploy:electron:prod": "pnpm --filter @repo/electron deploy:prod",
     "deploy:mobile:preview": "pnpm --filter @repo/mobile deploy:preview",
     "deploy:mobile:prod": "pnpm --filter @repo/mobile deploy:prod",
+    "release": "npm version --include-workspace-root && git push && git push --tags",
     "prepare": "husky"
   },
   "devDependencies": {
