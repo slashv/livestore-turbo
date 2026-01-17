@@ -1,5 +1,7 @@
 # LiveStore Turbo
 
+> **Note:** This project targets LiveStore 0.4, which is currently in beta.
+
 A cross-platform app template with real-time sync across web, desktop, and mobile. Uses [LiveStore](https://livestore.dev) for local-first data, [better-auth](https://better-auth.com) for authentication, and [Cloudflare](https://cloudflare.com) for deployment.
 
 **One codebase. Four platforms. Real-time sync.**
